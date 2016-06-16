@@ -19,11 +19,11 @@ const fetch = (id, db, cb) => {
 
 			console.info(i, id)
 			for (let dep of deps) db.write({
-				  w:  dep.when / 1000
-				, d:  'delay' in dep ? dep.delay / 1000 : null
-				, s:  dep.station.id
-				, l:  dep.product.line
-				, dr: dep.direction
+				  w: dep.when / 1000
+				, d: 'delay' in dep ? dep.delay / 1000 : null
+				, s: dep.station.id
+				, l: dep.product.line
+				, t: dep.trip
 			})
 
 			if (i >= cfg.iterations) cb()
