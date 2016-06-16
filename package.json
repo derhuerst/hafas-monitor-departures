@@ -10,8 +10,11 @@
 	"repository":   "derhuerst/vbb-monitor",
 	"license":      "ISC",
 	"engines":      {"node": ">=4"},
-	"devDependencies": {
+	"dependencies": {
 		"ndjson": "^1.4.3",
+		"through2-map": "^2"
+	},
+	"devDependencies": {
 		"vbb-hafas": "derhuerst/vbb-hafas",
 		"vbb-stations": "^0.4"
 	},
