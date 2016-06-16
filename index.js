@@ -1,22 +1,25 @@
 'use strict'
 
-const hafas = require('vbb-hafas')
 const ndjson = require('ndjson')
-const zlib = require('zlib')
-const fs = require('fs')
+const rfs = require('rotating-file-stream')
+const hafas = require('vbb-hafas')
 const stations = require('vbb-stations')
 
 
 
-const interval = 20
+const interval = 1
+const filename = (t, i) => {
+	if (!t) return 'db.ndjson'
+	return `db-${i}.ndjson`
+}
 const db = ndjson.stringify()
-db.pipe(zlib.createGzip()).pipe(fs.createWriteStream('db.ndjson'))
+db.pipe(rfs(filename, {size: '1G', compress: true}))
 
 const fetch = (id) => () => {
-	console.info('->', id)
-	hafas.departures(id, {duration: interval})
+	const when = new Date(Date.now() + 60 * 1000)
+	hafas.departures(id, {when, duration: interval})
 	.then((deps) => {
-		console.info('<-', id)
+		console.info(id)
 		for (let dep of deps) db.write({
 			  w:  dep.when / 1000
 			, d:  'delay' in dep ? dep.delay / 1000 : null

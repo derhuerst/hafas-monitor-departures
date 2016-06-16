@@ -11,8 +11,9 @@
 	"license":      "ISC",
 	"engines":      {"node": ">=4"},
 	"dependencies": {
-		"vbb-hafas": "derhuerst/vbb-hafas",
 		"ndjson": "^1.4.3",
+		"rotating-file-stream": "^1.0.5",
+		"vbb-hafas": "derhuerst/vbb-hafas",
 		"vbb-stations": "^0.4"
 	},
 	"scripts": {
