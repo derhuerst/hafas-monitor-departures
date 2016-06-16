@@ -17,6 +17,7 @@
 	},
 	"scripts": {
 		"start": "forever start -a --uid vbb-monitor index.js",
-		"stop":  "forever stop vbb-monitor"
+		"stop":  "forever stop vbb-monitor",
+		"ssh":   "ssh -i ./.scaleway root@vbb-monitor.jannisr.de"
 	}
 }
