@@ -12,7 +12,7 @@ const interval = 20
 const db = ndjson.stringify()
 db.pipe(zlib.createGzip()).pipe(fs.createWriteStream('db.ndjson'))
 
-const fetch = (id) => setInterval(() => {
+const fetch = (id) => () => {
 	console.info('->', id)
 	hafas.departures(id, {duration: interval})
 	.then((deps) => {
@@ -25,9 +25,13 @@ const fetch = (id) => setInterval(() => {
 			, dr: dep.direction
 		})
 	}, console.error)
-}, interval * 60 * 1000)
+}
 
 
 
 stations('all').on('error', console.error)
-.on('data', (s) => fetch(s.id))
+.on('data', (s) => {
+	const f = fetch(s.id)
+	setInterval(f, interval * 60 * 1000)
+	f()
+})
