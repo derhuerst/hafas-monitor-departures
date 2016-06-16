@@ -1,6 +1,7 @@
 'use strict'
 
 module.exports = {
-	interval:   1, // in minutes
-	iterations: 3
+	interval:   10, // in minutes
+	iterations: 10,
+	filter:     'all'
 }

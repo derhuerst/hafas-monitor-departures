@@ -1,6 +1,7 @@
 'use strict'
 
 const ndjson = require('ndjson')
+const zlib = require('zlib')
 const fs = require('fs')
 const hafas = require('vbb-hafas')
 const stations = require('vbb-stations')
@@ -33,8 +34,9 @@ const fetch = (id, db) => {
 
 
 const db = ndjson.stringify()
+db.pipe(zlib.createGzip())
 db.pipe(fs.createWriteStream('data.ndjson'))
 
 let x = 0
-stations('all').on('error', console.error)
+stations(cfg.filter).on('error', console.error)
 .on('data', (s) => setTimeout(fetch(s.id, db), x++ * 100)) // spread load
