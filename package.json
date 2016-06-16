@@ -10,15 +10,14 @@
 	"repository":   "derhuerst/vbb-monitor",
 	"license":      "ISC",
 	"engines":      {"node": ">=4"},
-	"dependencies": {
+	"devDependencies": {
 		"ndjson": "^1.4.3",
 		"rotating-file-stream": "^1.0.5",
 		"vbb-hafas": "derhuerst/vbb-hafas",
 		"vbb-stations": "^0.4"
 	},
 	"scripts": {
-		"start": "forever start -a --uid vbb-monitor index.js",
-		"stop":  "forever stop vbb-monitor",
+		"build": "node build.js",
 		"ssh":   "ssh -i ./.scaleway root@vbb-monitor.jannisr.de"
 	}
 }

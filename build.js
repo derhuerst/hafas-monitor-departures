@@ -7,7 +7,7 @@ const stations = require('vbb-stations')
 
 
 
-const interval = 1
+const interval = 10
 const filename = (t, i) => {
 	if (!t) return 'db.ndjson'
 	return `db-${i}.ndjson`
