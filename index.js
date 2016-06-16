@@ -2,6 +2,7 @@
 
 const hafas = require('vbb-hafas')
 const ndjson = require('ndjson')
+const zlib = require('zlib')
 const fs = require('fs')
 const stations = require('vbb-stations')
 
@@ -9,7 +10,7 @@ const stations = require('vbb-stations')
 
 const interval = 20
 const db = ndjson.stringify()
-db.pipe(fs.createWriteStream('db.ndjson'))
+db.pipe(zlib.createGzip()).pipe(fs.createWriteStream('db.ndjson'))
 
 const fetch = (id) => setInterval(() => {
 	console.info('->', id)
@@ -17,11 +18,11 @@ const fetch = (id) => setInterval(() => {
 	.then((deps) => {
 		console.info('<-', id)
 		for (let dep of deps) db.write({
-			  when:      dep.when / 1000
-			, delay:     'delay' in dep ? dep.delay / 1000 : null
-			, station:   dep.station.id
-			, product:   dep.product.line
-			, direction: dep.direction
+			  w:  dep.when / 1000
+			, d:  'delay' in dep ? dep.delay / 1000 : null
+			, s:  dep.station.id
+			, p:  dep.product.line
+			, dr: dep.direction
 		})
 	}, console.error)
 }, interval * 60 * 1000)
