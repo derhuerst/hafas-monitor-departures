@@ -1,0 +1,13 @@
+{
+	"name":         "vbb-monitor",
+	"description":  "Fetch all departures of all lines at all stations of VBB.",
+	"version":      "0.1.0",
+	"main":         "index.js",
+	"files":        ["index.js"],
+	"keywords":     ["vbb", "bvg", "public", "transport", "berlin"],
+	"author":       "Jannis R <mail@jannisr.de>",
+	"homepage":     "https://github.com/derhuerst/vbb-monitor",
+	"repository":   "derhuerst/vbb-monitor",
+	"license":      "ISC",
+	"engines":      {"node": ">=4"}
+}
