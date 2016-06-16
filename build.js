@@ -9,7 +9,7 @@ const cfg = require('./config')
 
 
 
-const fetch = (id, db) => {
+const fetch = (id, db, cb) => {
 	let i = 0
 	const self = () => {
 		if (++i < cfg.iterations) setTimeout(self, cfg.interval * 60 * 1000)
@@ -26,6 +26,7 @@ const fetch = (id, db) => {
 				, dr: dep.direction
 			})
 
+			if (i >= cfg.iterations) cb()
 		}, console.error)
 	}
 	return self
@@ -35,8 +36,12 @@ const fetch = (id, db) => {
 
 const db = ndjson.stringify()
 db.pipe(zlib.createGzip())
-db.pipe(fs.createWriteStream('data.ndjson'))
+.pipe(fs.createWriteStream('data.ndjson'))
 
-let x = 0
-stations(cfg.filter).on('error', console.error)
-.on('data', (s) => setTimeout(fetch(s.id, db), x++ * 100)) // spread load
+const noop = () => {}
+stations(true, cfg.filter).then((stations) => {
+	for (let i = 0; i < stations.length; i++) {
+		const cb = i === (stations.length - 1) ? () => {db.end()} : noop
+		setTimeout(fetch(stations[i].id, db, cb), i * 100) // spread load
+	}
+}, console.error)
