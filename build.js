@@ -36,7 +36,7 @@ const fetch = (id, db, cb) => {
 
 const db = ndjson.stringify()
 db.pipe(zlib.createGzip())
-.pipe(fs.createWriteStream('data.ndjson'))
+.pipe(fs.createWriteStream('data.ndjson.gzip'), {flags: 'a'})
 
 const noop = () => {}
 stations(true, cfg.filter).then((stations) => {
