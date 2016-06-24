@@ -16,7 +16,7 @@
 	},
 	"devDependencies": {
 		"vbb-hafas": "derhuerst/vbb-hafas",
-		"vbb-stations": "^0.4"
+		"vbb-stations": "^1"
 	},
 	"scripts": {
 		"build": "node build.js",

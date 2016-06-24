@@ -8,7 +8,7 @@ const map = require('through2-map')
 
 
 const data = () =>
-	fs.createReadStream('data.ndjson')
+	fs.createReadStream('data.ndjson.gzip')
 	.pipe(zlib.createGunzip())
 	.pipe(ndjson.parse())
 	.pipe(map.obj((d) =>
