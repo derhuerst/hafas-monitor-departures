@@ -18,6 +18,9 @@
 		"vbb-hafas": "derhuerst/vbb-hafas",
 		"vbb-stations": "^1"
 	},
+	"peerDependencies": {
+		"forever": "^0.15"
+	},
 	"scripts": {
 		"build": "node build.js",
 		"ssh":   "ssh -i ./.scaleway root@vbb-monitor.jannisr.de"
