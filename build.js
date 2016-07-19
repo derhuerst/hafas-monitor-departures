@@ -4,6 +4,7 @@ const ndjson = require('ndjson')
 const zlib = require('zlib')
 const fs = require('fs')
 const hafas = require('vbb-hafas')
+const multipipe = require('multipipe')
 const stations = require('vbb-stations')
 const cfg = require('./config')
 
@@ -17,7 +18,7 @@ const fetch = (id, db, cb) => {
 		const when = new Date(Date.now() + 60 * 1000)
 		hafas.departures(id, {when, duration: cfg.interval}).then((deps) => {
 
-			console.info(i, id)
+			if (deps.length > 0) console.info(i, id, deps.length)
 			for (let dep of deps) db.write({
 				  w: dep.when / 1000
 				, d: 'delay' in dep ? dep.delay / 1000 : null
@@ -34,9 +35,13 @@ const fetch = (id, db, cb) => {
 
 
 
-const db = ndjson.stringify()
-db.pipe(zlib.createGzip())
-.pipe(fs.createWriteStream('data.ndjson.gzip'), {flags: 'a'})
+const db = multipipe(
+	  ndjson.stringify()
+	, zlib.createGzip()
+	, fs.createWriteStream('data.ndjson.gzip', {flags: 'a'})
+)
+db.on('error', console.error)
+db.on('finish', () => console.log('finish'))
 
 const noop = () => {}
 stations(true, cfg.filter).then((stations) => {
