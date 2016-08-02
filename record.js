@@ -38,7 +38,7 @@ const fetch = (id, db, cb) => {
 const db = multipipe(
 	  ndjson.stringify()
 	, zlib.createGzip()
-	, fs.createWriteStream('data.ndjson.gzip', {flags: 'a'})
+	, fs.createWriteStream('raw.ndjson.gz')
 )
 db.on('error', console.error)
 db.on('finish', () => console.log('finish'))

@@ -23,7 +23,7 @@
 		"forever": "^0.15"
 	},
 	"scripts": {
-		"build": "node build.js",
+		"build": "node record.js && node digest.js",
 		"ssh":   "ssh -i ./.scaleway root@vbb-monitor.jannisr.de",
 		"deploy": "./deploy"
 	}
