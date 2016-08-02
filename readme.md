@@ -3,7 +3,9 @@
 **Fetch all departures of all lines at all stations of VBB.** (You may get blacklisted.)
 
 [![npm version](https://img.shields.io/npm/v/vbb-monitor.svg)](https://www.npmjs.com/package/vbb-monitor)
+[![build status](https://img.shields.io/travis/derhuerst/vbb-monitor.svg)](https://travis-ci.org/derhuerst/vbb-monitor)
 [![dependency status](https://img.shields.io/david/derhuerst/vbb-monitor.svg)](https://david-dm.org/derhuerst/vbb-monitor)
+[![dev dependency status](https://img.shields.io/david/dev/derhuerst/vbb-monitor.svg)](https://david-dm.org/derhuerst/vbb-monitor#info=devDependencies)
 ![ISC-licensed](https://img.shields.io/github/license/derhuerst/vbb-monitor.svg)
 
 

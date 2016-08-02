@@ -9,7 +9,7 @@
 	"homepage":     "https://github.com/derhuerst/vbb-monitor",
 	"repository":   "derhuerst/vbb-monitor",
 	"license":      "ISC",
-	"engines":      {"node": ">=6"},
+	"engines":      {"node": ">=4"},
 	"dependencies": {
 		"vbb-hafas": "^0.16"
 	},
