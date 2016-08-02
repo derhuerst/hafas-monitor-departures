@@ -13,5 +13,13 @@
 	"dependencies": {
 		"vbb-hafas": "^0.16"
 	},
-	"devDependencies": {}
+	"devDependencies": {
+		"tape": "^4.6",
+		"tap-min": "^1.1",
+		"sinon": "^1.17.5"
+	},
+	"scripts": {
+		"test": "tape test.js | tap-min",
+		"prepublish": "npm test"
+	}
 }
