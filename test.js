@@ -104,3 +104,15 @@ test('emits `close` on `stop()`', (t) => {
 	s.stop()
 	t.equal(spy.callCount, 1)
 })
+
+
+
+test('emits `end` on `stop()`', (t) => {
+	t.plan(1)
+	const s = monitor(stations, interval)
+	const spy = sinon.spy()
+	s.on('end', spy)
+
+	s.stop()
+	t.equal(spy.callCount, 1)
+})
