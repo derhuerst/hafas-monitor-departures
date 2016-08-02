@@ -10,22 +10,50 @@
 ## Installing
 
 ```shell
-git clone https://github.com/derhuerst/vbb-monitor.git
-cd vbb-monitor
-npm install --production
-npm start
+npm install vbb-monitor
 ```
-
-*Note*: [*forever*](https://github.com/foreverjs/forever#readme) actually isn't  required to run `vbb-monitor`, but listed as a [peer dependency](https://docs.npmjs.com/files/package.json#peerdependencies). The `npm start` script calls *forever* for production usage, so to run `npm start`, you need to `npm install [-g] forever` before.
 
 
 ## Usage
 
 ```shell
-node index.js
+const monitor = require('vbb-monitor')
+
+const stations = [9100003] // array of station ids
+const interval = 2 * 60 * 1000 // every two minutes
+
+departures(stations, interval)
+.on('error', console.error)
+.on('data', console.log)
+
+setTimeout(() => {
+	departures.stop() // stop querying
+}, interval * 3)
 ```
 
-The data will be in `db.ndjson`.
+The stream will emit data like this:
+
+```js
+{
+	when: 2016-08-02T18:46:00.000Z,
+	delay: 240000,
+	station: 9100030,
+	line: 'M6',
+	trip: 25157,
+	direction: 'S Hackescher Markt'
+}
+// …
+{
+	when: 2016-08-02T18:49:00.000Z,
+	delay: 120000,
+	station: 9100031,
+	line: '100',
+	trip: 3078,
+	direction: 'S+U Zoologischer Garten'
+}
+```
+
+*Note:* A stream created by calling `monitor(…)` does not stop calling the API if you `unpipe` it. You need to manually call `departures.stop()`.
 
 
 ## Contributing
