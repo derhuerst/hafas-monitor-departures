@@ -50,3 +50,8 @@ stations(true, cfg.filter).then((stations) => {
 		setTimeout(fetch(stations[i].id, db, cb), i * 100) // spread load
 	}
 }, console.error)
+
+process.on('SIGINT', () => {
+	db.end()
+	process.exit(0)
+})
