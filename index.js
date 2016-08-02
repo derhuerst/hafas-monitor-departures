@@ -1,57 +1,64 @@
 'use strict'
 
-const ndjson = require('ndjson')
-const zlib = require('zlib')
-const fs = require('fs')
+const ReadableStream = require('stream').Readable
 const hafas = require('vbb-hafas')
-const multipipe = require('multipipe')
-const stations = require('vbb-stations')
-const cfg = require('./config')
 
 
 
-const fetch = (id, db, cb) => {
-	let i = 0
-	const self = () => {
-		if (++i < cfg.iterations) setTimeout(self, cfg.interval * 60 * 1000)
-
-		const when = new Date(Date.now() + 60 * 1000)
-		hafas.departures(id, {when, duration: cfg.interval}).then((deps) => {
-
-			if (deps.length > 0) console.info(i, id, deps.length)
-			for (let dep of deps) db.write({
-				  w: dep.when / 1000
-				, d: 'delay' in dep ? dep.delay / 1000 : null
-				, s: dep.station.id
-				, l: dep.product.line
-				, t: dep.trip
-			})
-
-			if (i >= cfg.iterations) cb()
-		}, console.error)
-	}
-	return self
+const fetch = (id, duration, out) => () => {
+	const when = new Date(Date.now() + 60 * 1000)
+	hafas.departures(id, {when, duration})
+	.then((deps) => {
+		for (let dep of deps) out.push({
+			  when: dep.when
+			, delay: dep.delay
+			, station: dep.station.id
+			, line: dep.product ? dep.product.line : null
+			, trip: dep.trip
+			, direction: dep.direction
+		})
+	}, (err) => out.emit(err))
 }
 
 
 
-const db = multipipe(
-	  ndjson.stringify()
-	, zlib.createGzip()
-	, fs.createWriteStream('raw.ndjson.gz')
-)
-db.on('error', console.error)
-db.on('finish', () => console.log('finish'))
+module.exports = (stations, interval = 60 * 1000) => {
+	if (!stations || stations.length === 0)
+		throw new Error('At least one station must be passed.')
 
-const noop = () => {}
-stations(true, cfg.filter).then((stations) => {
-	for (let i = 0; i < stations.length; i++) {
-		const cb = i === (stations.length - 1) ? () => {db.end()} : noop
-		setTimeout(fetch(stations[i].id, db, cb), i * 100) // spread load
+
+
+	const out = new ReadableStream({objectMode: true})
+	out._read = () => {}
+	out.stop = () => {
+		stop()
+		out.emit('close')
 	}
-}, console.error)
 
-process.on('SIGINT', () => {
-	db.end()
-	process.exit(0)
-})
+
+
+	const intervals = {} // by station id
+
+	const start = () => {
+		const step = Math.min(Math.floor(interval / stations.length), 100)
+		let delay = 0
+		stations.forEach((id) => {
+			if (intervals[id]) clearInterval(intervals[id])
+			setTimeout(() => {
+				const cb = fetch(id, interval / 60 / 1000, out)
+				intervals[id] = setInterval(cb, interval)
+				cb()
+			}, delay)
+			delay += step
+		})
+	}
+
+	const stop = () => {
+		for (let id in intervals) clearInterval(intervals[id])
+	}
+
+
+
+	start()
+	return out
+}

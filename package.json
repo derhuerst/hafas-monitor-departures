@@ -9,22 +9,9 @@
 	"homepage":     "https://github.com/derhuerst/vbb-monitor",
 	"repository":   "derhuerst/vbb-monitor",
 	"license":      "ISC",
-	"engines":      {"node": ">=4"},
+	"engines":      {"node": ">=6"},
 	"dependencies": {
-		"ndjson": "^1.4.3",
-		"through2-map": "^2"
+		"vbb-hafas": "^0.16"
 	},
-	"devDependencies": {
-		"vbb-hafas": "derhuerst/vbb-hafas",
-		"multipipe": "^0.3.1",
-		"vbb-stations": "^1"
-	},
-	"peerDependencies": {
-		"forever": "^0.15"
-	},
-	"scripts": {
-		"build": "node record.js && node digest.js",
-		"ssh":   "ssh -i ./.scaleway root@vbb-monitor.jannisr.de",
-		"deploy": "./deploy"
-	}
+	"devDependencies": {}
 }
