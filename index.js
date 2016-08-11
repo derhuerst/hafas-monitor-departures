@@ -1,6 +1,6 @@
 'use strict'
 
-const ReadableStream = require('stream').Readable
+const Emitter = require('events').EventEmitter
 const hafas = require('vbb-hafas')
 
 
@@ -9,7 +9,7 @@ const fetch = (client, id, duration, out) => () => {
 	const when = new Date(Date.now() + 60 * 1000)
 	client.departures(id, {when, duration})
 	.then((deps) => {
-		for (let dep of deps) out.push({
+		for (let dep of deps) out.emit('data', {
 			  when: dep.when
 			, delay: dep.delay
 			, station: dep.station.id
@@ -32,8 +32,7 @@ module.exports = (stations, interval, step, client) => {
 
 
 
-	const out = new ReadableStream({objectMode: true})
-	out._read = () => {}
+	const out = new Emitter()
 	out.stop = () => {
 		stop()
 		out.emit('close')
