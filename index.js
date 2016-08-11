@@ -17,7 +17,7 @@ const fetch = (client, id, duration, out) => () => {
 			, trip: dep.trip
 			, direction: dep.direction
 		})
-	}, (err) => out.emit(err))
+	}, (err) => out.emit('error', err))
 }
 
 
