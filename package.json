@@ -1,7 +1,7 @@
 {
 	"name":         "vbb-monitor",
 	"description":  "Fetch all departures of all lines at all stations of VBB.",
-	"version":      "0.1.1",
+	"version":      "0.2.0",
 	"main":         "index.js",
 	"files":        ["index.js"],
 	"keywords":     ["vbb", "bvg", "public", "transport", "berlin"],
