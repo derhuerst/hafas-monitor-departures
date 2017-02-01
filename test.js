@@ -8,7 +8,7 @@ const monitor = require('./index')
 
 
 
-const stations = [9100003, 9023201] // alex & zoo
+const stations = ['900000100003', '900000023201'] // alex & zoo
 const interval = 10 * 1000 // 10s
 
 const mockedDeparture = (id, opt) => () => ({

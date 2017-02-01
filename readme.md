@@ -22,10 +22,10 @@ npm install vbb-monitor
 ```js
 const monitor = require('vbb-monitor')
 
-const stations = [9100003] // array of station ids
+const stations = ['900000100003'] // array of station ids
 const interval = 2 * 60 * 1000 // every two minutes
 
-departures(stations, interval)
+const departures = monitor(stations, interval)
 .on('error', console.error)
 .on('data', console.log)
 
@@ -40,7 +40,7 @@ The stream will emit data like this:
 {
 	when: 2016-08-02T18:46:00.000Z,
 	delay: 240000,
-	station: 9100030,
+	station: '900000100030',
 	line: 'M6',
 	trip: 25157,
 	direction: 'S Hackescher Markt'
@@ -49,7 +49,7 @@ The stream will emit data like this:
 {
 	when: 2016-08-02T18:49:00.000Z,
 	delay: 120000,
-	station: 9100031,
+	station: '900000100031',
 	line: '100',
 	trip: 3078,
 	direction: 'S+U Zoologischer Garten'
