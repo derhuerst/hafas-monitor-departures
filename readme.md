@@ -19,7 +19,7 @@ npm install vbb-monitor
 
 ## Usage
 
-```shell
+```js
 const monitor = require('vbb-monitor')
 
 const stations = [9100003] // array of station ids
