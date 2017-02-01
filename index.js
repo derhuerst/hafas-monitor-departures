@@ -36,7 +36,8 @@ module.exports = (stations, interval, step, client) => {
 	out._read = () => {}
 	out.stop = () => {
 		stop()
-		out.close()
+		out.emit('end')
+		out.emit('close')
 	}
 
 

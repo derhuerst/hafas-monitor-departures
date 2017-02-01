@@ -1,6 +1,6 @@
 'use strict'
 
-const test = require('tape-catch')
+const test = require('tape')
 const sinon = require('sinon')
 const isStream = require('is-stream')
 
@@ -20,10 +20,18 @@ const mockedDeparture = (id, opt) => () => ({
 	, trip: Math.round(Math.random() * 30000)
 })
 
-const mockedDepartures = (id, opt) => new Promise((yay, nay) =>
-	setTimeout(yay, 500, new Array(opt.duration).map(mockedDeparture(id, opt))))
+const mockedDepartures = (id, opt) =>
+	new Promise((yay, nay) => {
+		setTimeout(() => {
+			const deps = new Array(opt.duration).fill(null)
+				.map(mockedDeparture(id, opt))
+			yay(deps)
+		}, 500)
+	})
 
-const mockedHafas = () => ({departures: sinon.spy(mockedDepartures)})
+const mockedHafas = () => ({
+	departures: sinon.spy(mockedDepartures)
+})
 
 
 
@@ -95,14 +103,17 @@ test('clears all intervals on `stop()`', (t) => {
 
 
 
-test('emits `close` on `stop()`', (t) => {
-	t.plan(1)
+test('emits `close` & `end` on `stop()`', (t) => {
+	t.plan(2)
 	const s = monitor(stations, interval)
-	const spy = sinon.spy()
-	s.on('close', spy)
+	const onClose = sinon.spy()
+	const onEnd = sinon.spy()
+	s.on('close', onClose)
+	s.on('end', onEnd)
 
 	s.stop()
-	t.equal(spy.callCount, 1)
+	t.equal(onClose.callCount, 1)
+	t.equal(onEnd.callCount, 1)
 })
 
 
