@@ -16,7 +16,7 @@
 	"devDependencies": {
 		"tape": "^4.6.3",
 		"tap-min": "derhuerst/tap-min",
-		"sinon": "^1.17.7",
+		"sinon": "^2.0.0",
 		"is-stream": "^1.1.0"
 	},
 	"scripts": {
