@@ -38,19 +38,53 @@ The stream will emit data like this:
 
 ```js
 {
-	when: 2016-08-02T18:46:00.000Z,
-	delay: 240000,
-	station: '900000100030',
-	line: 'M6',
+	when: '2017-05-22T14:25:00+02:00',
+	delay: 240,
+	station: {
+		type: 'station',
+		id: '900000100030',
+		name: 'S+U Alexanderplatz/Gontardstr.',
+		coordinates: {latitude: 52.521059, longitude: 13.41125},
+		products: // …
+	},
+	line: {
+		type: 'line',
+		id: 'm4'
+		name: 'M$',
+		mode: 'train',
+		product: 'tram',
+		symbol: 'M',
+		nr: 4,
+		metro: true,
+		express: false,
+		night: false,
+	},
 	trip: 25157,
 	direction: 'S Hackescher Markt'
 }
 // …
 {
-	when: 2016-08-02T18:49:00.000Z,
-	delay: 120000,
-	station: '900000100031',
-	line: '100',
+	when: '2017-05-22T14:31:00+02:00',
+	delay: 420,
+	station: {
+		type: 'station',
+		id: '900000100031',
+		name: 'S+U Alexanderplatz/Memhardstr.',
+		coordinates: {latitude: 52.523099, longitude: 13.410962},
+		products: // …
+	},
+	line: {
+		type: 'line',
+		id: '100',
+		name: '100',
+		mode: 'bus',
+		product: 'bus',
+		symbol: null,
+		nr: 100,
+		metro: false,
+		express: false,
+		night: false
+	},
 	trip: 3078,
 	direction: 'S+U Zoologischer Garten'
 }

@@ -9,22 +9,16 @@ const fetch = (client, id, duration, out) => () => {
 	const when = new Date(Date.now() + 60 * 1000)
 	client.departures(id, {when, duration})
 	.then((deps) => {
-		for (let dep of deps) out.push({
-			  when: dep.when
-			, delay: dep.delay
-			, station: dep.station.id
-			, line: dep.product ? dep.product.line : null
-			, trip: dep.trip
-			, direction: dep.direction
-		})
+		for (let dep of deps) out.push(dep)
 	}, (err) => out.emit('error', err))
 }
 
 
 
-module.exports = (stations, interval, step, client) => {
-	if (!stations || stations.length === 0)
+const monitor = (stations, interval, step, client) => {
+	if (!stations || stations.length === 0) {
 		throw new Error('At least one station must be passed.')
+	}
 	interval = interval || 60 * 1000
 	step = step || Math.min(Math.floor(interval / stations.length), 100)
 	client = client || hafas // allow mocking
@@ -65,3 +59,5 @@ module.exports = (stations, interval, step, client) => {
 	start()
 	return out
 }
+
+module.exports = monitor
