@@ -36,6 +36,10 @@ const monitor = (stations, interval, step, client) => {
 		out.emit('close')
 	}
 
+	const manual = out.manual = (id) => {
+		fetch(client, id, duration, out)()
+	}
+
 	stations.forEach((id, i) => {
 		timeouts[id] = setTimeout(() => {
 			const cb = fetch(client, id, duration, out)

@@ -92,6 +92,8 @@ The stream will emit data like this:
 
 *Note:* A stream created by calling `monitor(…)` does not stop calling the API if you `unpipe` it. You need to manually call `departures.stop()`.
 
+To manually issue a *single* departures check at a station, use `departures.manual(id)`. The result will be emitted in a data event like all others.
+
 
 ## Contributing
 

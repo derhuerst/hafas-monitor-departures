@@ -85,6 +85,22 @@ test('checks for every `interval` milliseconds', (t) => {
 
 
 
+test('runs a manual check', (t) => {
+	t.plan(2)
+	const mock = mockedHafas()
+
+	const s = monitor(stations, interval, 10, mock)
+	const oldCount = mock.departures.callCount
+
+	s.manual('900000100003')
+	t.equal(mock.departures.callCount, oldCount + 1)
+	t.equal(mock.departures.getCall(oldCount).args[0], '900000100003')
+
+	s.stop()
+})
+
+
+
 test('clears all intervals on `stop()`', (t) => {
 	t.plan(1)
 	const clock = sinon.useFakeTimers()
