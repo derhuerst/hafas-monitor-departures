@@ -1,7 +1,7 @@
 {
 	"name": "vbb-monitor",
 	"description": "Fetch all departures at any set of VBB stations.",
-	"version": "1.1.0",
+	"version": "1.2.0",
 	"main": "index.js",
 	"files": [
 		"index.js"
