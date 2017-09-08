@@ -1,6 +1,6 @@
 # vbb-monitor 🔭
 
-**Fetch all departures of all lines at all stations of VBB.** (You may get blacklisted.)
+**Fetch all departures at any set of VBB stations.** (You may get blacklisted.)
 
 [![npm version](https://img.shields.io/npm/v/vbb-monitor.svg)](https://www.npmjs.com/package/vbb-monitor)
 [![build status](https://img.shields.io/travis/derhuerst/vbb-monitor.svg)](https://travis-ci.org/derhuerst/vbb-monitor)
