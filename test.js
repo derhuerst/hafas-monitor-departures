@@ -12,12 +12,12 @@ const stations = ['900000100003', '900000023201'] // alex & zoo
 const interval = 10 * 1000 // 10s
 
 const mockedDeparture = (id, opt) => () => ({
-	  station: {id}
-	, when: new Date(opt.when + 5 * 1000)
-	, delay: 2 * 1000
-	, direction: 'foo'
-	, product: {line: 123}
-	, trip: Math.round(Math.random() * 30000)
+	station: {id},
+	when: new Date(opt.when + 5 * 1000).toISOString(),
+	delay: 2,
+	direction: 'foo',
+	line: {id: '123'},
+	trip: Math.round(Math.random() * 30000)
 })
 
 const mockedDepartures = (id, opt) =>
