@@ -2,6 +2,7 @@
 
 const {Readable} = require('stream')
 const hafas = require('vbb-hafas')
+const createAvgWindow = require('live-moving-average')
 
 const monitor = (stations, interval, step, client) => {
 	if (!stations || stations.length === 0) {
@@ -12,25 +13,23 @@ const monitor = (stations, interval, step, client) => {
 	client = client || hafas // allow mocking
 	const duration = Math.ceil(interval / 60 / 1000)
 
-	const stats = {reqs: 0, departures: 0, avgDuration: null}
-	let durationOfLast10 = 0
+	const avgDuration = createAvgWindow(5, 0)
+	let reqs = 0, departures = 0
 	const fetch = (client, id, duration, out) => () => {
 		const start = Date.now()
-		stats.reqs++
+		reqs++
 
 		const when = new Date(start + 60 * 1000)
 		client.departures(id, {when, duration})
 		.then((deps) => {
-			durationOfLast10 += Date.now() - start
-			stats.departures += deps.length
+			avgDuration.push(Date.now() - start)
+			departures += deps.length
 
 			for (let dep of deps) out.push(dep)
 
-			if ((stats.reqs % 10) === 0) {
-				stats.avgDuration = Math.round(durationOfLast10 / 10)
-				durationOfLast10 = 0
-				out.emit('stats', stats)
-			}
+			out.emit('stats', {
+				reqs, departures, avgDuration: avgDuration.get()
+			})
 		})
 		.catch(err => out.emit('error', err))
 	}
