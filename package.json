@@ -22,7 +22,7 @@
 	},
 	"dependencies": {
 		"live-moving-average": "^0.1.0",
-		"vbb-hafas": "^2.0.0"
+		"vbb-hafas": "^3.0.0"
 	},
 	"devDependencies": {
 		"is-stream": "^1.1.0",
