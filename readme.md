@@ -34,59 +34,54 @@ setTimeout(() => {
 }, interval * 3)
 ```
 
-The stream will emit data like this:
+The stream will emit [*Friendly Public Transport Format* `1.0.1`](https://github.com/public-transport/friendly-public-transport-format/blob/1.0.1/spec/readme.md) [departures](https://github.com/derhuerst/hafas-client/blob/master/docs/departures.md#response), looking like this:
 
 ```js
 {
-	when: '2017-05-22T14:25:00+02:00',
-	delay: 240,
+	journeyId: '1|26644|13|86|16012018',
 	station: {
 		type: 'station',
-		id: '900000100030',
-		name: 'S+U Alexanderplatz/Gontardstr.',
-		coordinates: {latitude: 52.521059, longitude: 13.41125},
-		products: // …
+		id: '900000100005',
+		name: 'U Alexanderplatz [Tram]',
+		location: {
+			type: 'location',
+			latitude: 52.522389,
+			longitude: 13.414495
+		},
+		products: {
+			suburban: false,
+			subway: false,
+			tram: true,
+			bus: false,
+			ferry: false,
+			express: false,
+			regional: false
+		}
 	},
+	when: '2018-01-16T14:22:00.000+01:00',
+	direction: 'S+U Hauptbahnhof',
 	line: {
 		type: 'line',
-		id: 'm4'
-		name: 'M$',
-		mode: 'train',
+		id: '4250',
+		name: 'M5',
+		public: true,
 		product: 'tram',
-		symbol: 'M',
-		nr: 4,
-		metro: true,
-		express: false,
-		night: false,
-	},
-	trip: 25157,
-	direction: 'S Hackescher Markt'
-}
-// …
-{
-	when: '2017-05-22T14:31:00+02:00',
-	delay: 420,
-	station: {
-		type: 'station',
-		id: '900000100031',
-		name: 'S+U Alexanderplatz/Memhardstr.',
-		coordinates: {latitude: 52.523099, longitude: 13.410962},
-		products: // …
-	},
-	line: {
-		type: 'line',
-		id: '100',
-		name: '100',
-		mode: 'bus',
-		product: 'bus',
+		mode: 'train',
 		symbol: null,
-		nr: 100,
+		nr: null,
 		metro: false,
 		express: false,
-		night: false
+		night: false,
+		operator: {
+			type: 'operator',
+			id: 'berliner-verkehrsbetriebe',
+			name: 'Berliner Verkehrsbetriebe'
+		},
+		productCode: 2,
+		class: 4
 	},
-	trip: 3078,
-	direction: 'S+U Zoologischer Garten'
+	trip: 26644,
+	delay: 1080
 }
 ```
 
