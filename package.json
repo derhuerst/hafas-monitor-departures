@@ -31,7 +31,7 @@
 		"tape": "^4.6.3"
 	},
 	"scripts": {
-		"test": "tape test.js | tap-min",
+		"test": "node test.js | tap-min",
 		"prepublishOnly": "npm test"
 	}
 }
