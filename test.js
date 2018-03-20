@@ -16,7 +16,13 @@ const mockedDeparture = (id, opt) => () => ({
 	when: new Date(opt.when + 5 * 1000).toISOString(),
 	delay: 2,
 	direction: 'foo',
-	line: {id: '123'},
+	line: {
+		type: 'line',
+		id: '123',
+		name: '123 Line',
+		public: true,
+		mode: 'train'
+	},
 	trip: Math.round(Math.random() * 30000)
 })
 
