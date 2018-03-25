@@ -1,5 +1,4 @@
 'use strict'
-const wtfnode = require('wtfnode')
 
 const test = require('tape')
 const hafas = require('vbb-hafas')
