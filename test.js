@@ -9,6 +9,7 @@ const createMonitor = require('./index')
 
 const stations = ['900000100003', '900000023201'] // alex & zoo
 const interval = 10 * 1000 // 10s
+const step = Math.floor(interval / stations.length)
 
 
 
@@ -61,11 +62,11 @@ test('starts querying in steps', (t) => {
 	const clock = sinon.useFakeTimers()
 	const hafasMock = mockedHafas()
 
-	const s = createMonitor(hafasMock, stations, interval, 50)
+	const s = createMonitor(hafasMock, stations, interval)
 	t.equal(hafasMock.departures.callCount, 0)
 	clock.tick(1)
 	t.equal(hafasMock.departures.callCount, 1)
-	clock.tick(50)
+	clock.tick(step)
 	t.equal(hafasMock.departures.callCount, 2)
 
 	s.stop()
@@ -79,9 +80,9 @@ test('checks for every `interval` milliseconds', (t) => {
 	const clock = sinon.useFakeTimers()
 	const hafasMock = mockedHafas()
 
-	const s = createMonitor(hafasMock, stations, interval, 1)
+	const s = createMonitor(hafasMock, stations, interval)
 	t.equal(hafasMock.departures.callCount, 0)
-	clock.tick(1)
+	clock.tick(step)
 	t.equal(hafasMock.departures.callCount, stations.length)
 	clock.tick(interval)
 	t.equal(hafasMock.departures.callCount, 2 * stations.length)
@@ -96,7 +97,7 @@ test('runs a manual check', (t) => {
 	t.plan(2)
 	const hafasMock = mockedHafas()
 
-	const s = createMonitor(hafasMock, stations, interval, 10)
+	const s = createMonitor(hafasMock, stations, interval)
 	const oldCount = hafasMock.departures.callCount
 
 	s.manual('900000100003')
@@ -113,8 +114,8 @@ test('clears all intervals on `stop()`', (t) => {
 	const clock = sinon.useFakeTimers()
 	const hafasMock = mockedHafas()
 
-	const s = createMonitor(hafasMock, stations, interval, 1)
-	clock.tick(1 + 5 * interval)
+	const s = createMonitor(hafasMock, stations, interval)
+	clock.tick(step + 5 * interval)
 	const count = hafasMock.departures.callCount
 
 	s.stop()
@@ -128,7 +129,7 @@ test('clears all intervals on `stop()`', (t) => {
 
 test('emits `close` & `end` on `stop()`', (t) => {
 	t.plan(2)
-	const s = createMonitor(hafas, stations, interval, 100)
+	const s = createMonitor(hafas, stations, interval)
 	s.on('data', () => {})
 	const onClose = sinon.spy()
 	const onEnd = sinon.spy()

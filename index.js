@@ -3,7 +3,7 @@
 const {Readable} = require('stream')
 const createAvgWindow = require('live-moving-average')
 
-const createMonitor = (hafas, stations, interval, step) => {
+const createMonitor = (hafas, stations, interval) => {
 	if (!hafas || 'function' !== typeof hafas.departures) {
 		throw new Error('Invalid HAFAS client passed.')
 	}
@@ -11,7 +11,7 @@ const createMonitor = (hafas, stations, interval, step) => {
 		throw new Error('At least one station must be passed.')
 	}
 	interval = interval || 60 * 1000
-	step = step || Math.floor(interval / stations.length)
+	const step = Math.floor(interval / stations.length)
 	const duration = Math.ceil(interval / 60 / 1000)
 
 	const avgDuration = createAvgWindow(5, 0)
