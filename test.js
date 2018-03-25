@@ -10,6 +10,7 @@ const createMonitor = require('./index')
 const stations = ['900000100003', '900000023201'] // alex & zoo
 const interval = 10 * 1000 // 10s
 const step = Math.floor(interval / stations.length)
+const anotherStation = '900000013102' // kotti
 
 
 
@@ -143,4 +144,27 @@ test('emits `close` & `end` on `stop()`', (t) => {
 			t.equal(onEnd.callCount, 1)
 		})
 	})
+})
+
+
+
+test('allows changing stations', (t) => {
+	t.plan(2)
+	const hafasMock = mockedHafas()
+	const clock = sinon.useFakeTimers()
+	const s = createMonitor(hafasMock, stations, interval)
+
+	clock.tick(interval - 10)
+	s.addStation(anotherStation)
+	s.removeStation(stations[0])
+	s.removeStation(stations[1])
+
+	clock.tick(20)
+	const callNr = stations.length // 1 after previous badge
+	t.equal(hafasMock.departures.getCall(callNr).args[0], anotherStation)
+	clock.tick(interval)
+	t.equal(hafasMock.departures.callCount, callNr + 2)
+
+	s.stop()
+	clock.restore()
 })
