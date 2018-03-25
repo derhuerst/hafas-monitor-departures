@@ -21,13 +21,13 @@ npm install hafas-monitor-departures
 As an exampe, we're going to use [`vbb-hafas`, the HAFAS client for Berlin](https://www.npmjs.com/package/vbb-hafas).
 
 ```js
-const monitor = require('hafas-monitor-departures')
+const createMonitor = require('hafas-monitor-departures')
 const hafas = require('vbb-hafas')
 
 const stations = ['900000100003'] // array of station ids
 const interval = 2 * 60 * 1000 // every two minutes
 
-const departures = monitor(hafas, stations, interval)
+const departures = createMonitor(hafas, stations, interval)
 .on('error', console.error)
 .on('data', console.log)
 
@@ -36,9 +36,9 @@ setTimeout(() => {
 }, interval * 3)
 ```
 
-`monitor` will call `hafas.departures()` and writes each of the returned departures into the stream. It expects `departures()` to be compatible with [the implementation from `hafas-client`](https://github.com/public-transport/hafas-client/blob/v2.5.0/docs/departures.md#departuresstation-opt).
+`createMonitor` will call `hafas.departures()` and writes each of the returned departures into the stream. It expects `departures()` to be compatible with [the implementation from `hafas-client`](https://github.com/public-transport/hafas-client/blob/v2.5.0/docs/departures.md#departuresstation-opt).
 
-*Note:* A stream created by calling `monitor(…)` does not stop calling the API if you `unpipe` it. You need to manually call `departures.stop()`.
+*Note:* A stream created by calling `createMonitor(…)` does not stop calling the API if you `unpipe` it. You need to manually call `departures.stop()`.
 
 To manually issue a *single* departures check at a station, use `departures.manual(id)`. The result will be emitted in a data event like all others.
 

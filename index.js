@@ -3,7 +3,7 @@
 const {Readable} = require('stream')
 const createAvgWindow = require('live-moving-average')
 
-const monitor = (hafas, stations, interval, step) => {
+const createMonitor = (hafas, stations, interval, step) => {
 	if (!hafas || 'function' !== typeof hafas.departures) {
 		throw new Error('Invalid HAFAS client passed.')
 	}
@@ -16,18 +16,21 @@ const monitor = (hafas, stations, interval, step) => {
 
 	const avgDuration = createAvgWindow(5, 0)
 	let reqs = 0, departures = 0
-	const fetch = (id, duration, out) => () => {
+	const fetch = (id) => {
 		const start = Date.now()
 		reqs++
 
 		const when = new Date(start + 60 * 1000)
 		hafas.departures(id, {when, duration})
 		.then((deps) => {
+			if (stopped) return
+
 			avgDuration.push(Date.now() - start)
 			departures += deps.length
 
 			for (let dep of deps) out.push(dep)
 
+			// todo: debounce this
 			out.emit('stats', {
 				reqs, departures, avgDuration: avgDuration.get()
 			})
@@ -35,35 +38,36 @@ const monitor = (hafas, stations, interval, step) => {
 		.catch(err => out.emit('error', err))
 	}
 
-	const intervals = {} // by station id
-	const timeouts = {} // by station id, used in the beginning
-
-	const stop = () => {
-		for (let id in timeouts) clearTimeout(timeouts[id])
-		for (let id in intervals) clearInterval(intervals[id])
+	const fetchAll = () => {
+		let i = 1
+		const interval = setInterval(() => {
+			fetch(stations[i])
+			i++
+			if (stopped || i >= stations.length) clearInterval(interval)
+		}, step)
+		fetch(stations[0])
 	}
 
-	const out = new Readable({objectMode: true})
-	out._read = () => {}
-	out.stop = () => {
-		stop()
-		out.emit('end')
-		out.emit('close')
-	}
-
-	const manual = out.manual = (id) => {
-		fetch(id, duration, out)()
-	}
-
-	stations.forEach((id, i) => {
-		timeouts[id] = setTimeout(() => {
-			const cb = fetch(id, duration, out)
-			intervals[id] = setInterval(cb, interval)
-			cb()
-		}, i * step)
+	const out = new Readable({
+		objectMode: true,
+		read: () => {}
 	})
+	out.manual = fetch
+
+	let stopped = false
+	let _interval = setInterval(fetchAll, interval)
+	setImmediate(fetchAll)
+	out.stop = () => {
+		if (!stopped) {
+			stopped = true
+			clearInterval(_interval)
+			_interval = null
+		}
+		out.emit('close')
+		out.push(null) // end
+	}
 
 	return out
 }
 
-module.exports = monitor
+module.exports = createMonitor

@@ -5,7 +5,7 @@ const hafas = require('vbb-hafas')
 const sinon = require('sinon')
 const isStream = require('is-stream')
 
-const monitor = require('./index')
+const createMonitor = require('./index')
 
 const stations = ['900000100003', '900000023201'] // alex & zoo
 const interval = 10 * 1000 // 10s
@@ -44,8 +44,8 @@ const mockedHafas = () => ({
 
 test('returns a stream', (t) => {
 	t.plan(2)
-	const s1 = monitor(hafas, stations, interval)
-	const s2 = monitor(hafas, stations)
+	const s1 = createMonitor(hafas, stations, interval)
+	const s2 = createMonitor(hafas, stations)
 
 	t.ok(isStream(s1))
 	t.ok(isStream(s2))
@@ -61,7 +61,7 @@ test('starts querying in steps', (t) => {
 	const clock = sinon.useFakeTimers()
 	const hafasMock = mockedHafas()
 
-	const s = monitor(hafasMock, stations, interval, 50)
+	const s = createMonitor(hafasMock, stations, interval, 50)
 	t.equal(hafasMock.departures.callCount, 0)
 	clock.tick(1)
 	t.equal(hafasMock.departures.callCount, 1)
@@ -79,7 +79,7 @@ test('checks for every `interval` milliseconds', (t) => {
 	const clock = sinon.useFakeTimers()
 	const hafasMock = mockedHafas()
 
-	const s = monitor(hafasMock, stations, interval, 1)
+	const s = createMonitor(hafasMock, stations, interval, 1)
 	t.equal(hafasMock.departures.callCount, 0)
 	clock.tick(1)
 	t.equal(hafasMock.departures.callCount, stations.length)
@@ -96,7 +96,7 @@ test('runs a manual check', (t) => {
 	t.plan(2)
 	const hafasMock = mockedHafas()
 
-	const s = monitor(hafasMock, stations, interval, 10)
+	const s = createMonitor(hafasMock, stations, interval, 10)
 	const oldCount = hafasMock.departures.callCount
 
 	s.manual('900000100003')
@@ -113,7 +113,7 @@ test('clears all intervals on `stop()`', (t) => {
 	const clock = sinon.useFakeTimers()
 	const hafasMock = mockedHafas()
 
-	const s = monitor(hafasMock, stations, interval, 1)
+	const s = createMonitor(hafasMock, stations, interval, 1)
 	clock.tick(1 + 5 * interval)
 	const count = hafasMock.departures.callCount
 
@@ -128,7 +128,7 @@ test('clears all intervals on `stop()`', (t) => {
 
 test('emits `close` & `end` on `stop()`', (t) => {
 	t.plan(2)
-	const s = monitor(hafas, stations, interval)
+	const s = createMonitor(hafas, stations, interval)
 	const onClose = sinon.spy()
 	const onEnd = sinon.spy()
 	s.on('close', onClose)
@@ -143,7 +143,7 @@ test('emits `close` & `end` on `stop()`', (t) => {
 
 test('emits `end` on `stop()`', (t) => {
 	t.plan(1)
-	const s = monitor(hafas, stations, interval)
+	const s = createMonitor(hafas, stations, interval)
 	const spy = sinon.spy()
 	s.on('end', spy)
 
