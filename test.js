@@ -8,7 +8,7 @@ const isStream = require('is-stream')
 const createMonitor = require('./index')
 
 const stations = ['900000100003', '900000023201'] // alex & zoo
-const interval = 10 * 1000 // 10s
+const interval = 5 * 1000 // 5s
 
 
 
@@ -44,14 +44,18 @@ const mockedHafas = () => ({
 
 test('returns a stream', (t) => {
 	t.plan(2)
-	const s1 = createMonitor(hafas, stations, interval)
-	const s2 = createMonitor(hafas, stations)
+	const hafasMock = mockedHafas()
+	const clock = sinon.useFakeTimers()
+	const s1 = createMonitor(hafasMock, stations, interval)
+	const s2 = createMonitor(hafasMock, stations)
 
 	t.ok(isStream(s1))
 	t.ok(isStream(s2))
 
 	s1.stop()
 	s2.stop()
+	clock.tick(30 * 1000)
+	clock.restore()
 })
 
 
