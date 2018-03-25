@@ -1,28 +1,28 @@
 {
-	"name": "vbb-monitor",
-	"description": "Fetch all departures at any set of VBB stations.",
+	"name": "hafas-monitor-departures",
+	"description": "Pass in a HAFAS client, fetch all departures at any set of stations.",
 	"version": "3.0.0",
 	"main": "index.js",
 	"files": [
 		"index.js"
 	],
 	"keywords": [
-		"vbb",
-		"bvg",
+		"hafas",
 		"public",
 		"transport",
-		"berlin"
+		"transit",
+		"departures",
+		"delays"
 	],
 	"author": "Jannis R <mail@jannisr.de>",
-	"homepage": "https://github.com/derhuerst/vbb-monitor",
-	"repository": "derhuerst/vbb-monitor",
+	"homepage": "https://github.com/derhuerst/hafas-monitor-departures",
+	"repository": "derhuerst/hafas-monitor-departures",
 	"license": "ISC",
 	"engines": {
-		"node": ">=4"
+		"node": ">=6"
 	},
 	"dependencies": {
-		"live-moving-average": "^0.1.0",
-		"vbb-hafas": "^4.0.0"
+		"live-moving-average": "^0.1.0"
 	},
 	"devDependencies": {
 		"is-stream": "^1.1.0",

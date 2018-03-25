@@ -1,10 +1,10 @@
-# vbb-monitor 🔭
+# hafas-monitor-departures 🔭
 
-**Fetch all departures at any set of VBB stations.** (You may get blacklisted.)
+**Pass in a HAFAS client, fetch all departures at any set of stations.** (You may get blacklisted.)
 
-[![npm version](https://img.shields.io/npm/v/vbb-monitor.svg)](https://www.npmjs.com/package/vbb-monitor)
-[![build status](https://img.shields.io/travis/derhuerst/vbb-monitor.svg)](https://travis-ci.org/derhuerst/vbb-monitor)
-![ISC-licensed](https://img.shields.io/github/license/derhuerst/vbb-monitor.svg)
+[![npm version](https://img.shields.io/npm/v/hafas-monitor-departures.svg)](https://www.npmjs.com/package/hafas-monitor-departures)
+[![build status](https://img.shields.io/travis/derhuerst/hafas-monitor-departures.svg)](https://travis-ci.org/derhuerst/hafas-monitor-departures)
+![ISC-licensed](https://img.shields.io/github/license/derhuerst/hafas-monitor-departures.svg)
 [![gitter channel](https://badges.gitter.im/derhuerst/vbb-rest.svg)](https://gitter.im/derhuerst/vbb-rest)
 [![support me on Patreon](https://img.shields.io/badge/support%20me-on%20patreon-fa7664.svg)](https://patreon.com/derhuerst)
 
@@ -12,14 +12,14 @@
 ## Installing
 
 ```shell
-npm install vbb-monitor
+npm install hafas-monitor-departures
 ```
 
 
 ## Usage
 
 ```js
-const monitor = require('vbb-monitor')
+const monitor = require('hafas-monitor-departures')
 
 const stations = ['900000100003'] // array of station ids
 const interval = 2 * 60 * 1000 // every two minutes
@@ -91,4 +91,4 @@ To manually issue a *single* departures check at a station, use `departures.manu
 
 ## Contributing
 
-If you **have a question**, **found a bug** or want to **propose a feature**, have a look at [the issues page](https://github.com/derhuerst/vbb-monitor/issues).
+If you **have a question**, **found a bug** or want to **propose a feature**, have a look at [the issues page](https://github.com/derhuerst/hafas-monitor-departures/issues).
