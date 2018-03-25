@@ -41,9 +41,9 @@ const createMonitor = (hafas, stations, interval, step) => {
 	const fetchAll = () => {
 		let i = 1
 		const interval = setInterval(() => {
+			if (stopped || i >= stations.length) return clearInterval(interval)
 			fetch(stations[i])
 			i++
-			if (stopped || i >= stations.length) clearInterval(interval)
 		}, step)
 		fetch(stations[0])
 	}
