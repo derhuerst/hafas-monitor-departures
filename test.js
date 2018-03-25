@@ -1,15 +1,16 @@
 'use strict'
 
 const test = require('tape')
+const hafas = require('vbb-hafas')
 const sinon = require('sinon')
 const isStream = require('is-stream')
 
 const monitor = require('./index')
 
-
-
 const stations = ['900000100003', '900000023201'] // alex & zoo
 const interval = 10 * 1000 // 10s
+
+
 
 const mockedDeparture = (id, opt) => () => ({
 	station: {id},
@@ -43,8 +44,8 @@ const mockedHafas = () => ({
 
 test('returns a stream', (t) => {
 	t.plan(2)
-	const s1 = monitor(stations, interval)
-	const s2 = monitor(stations)
+	const s1 = monitor(hafas, stations, interval)
+	const s2 = monitor(hafas, stations)
 
 	t.ok(isStream(s1))
 	t.ok(isStream(s2))
@@ -58,14 +59,14 @@ test('returns a stream', (t) => {
 test('starts querying in steps', (t) => {
 	t.plan(3)
 	const clock = sinon.useFakeTimers()
-	const mock = mockedHafas()
+	const hafasMock = mockedHafas()
 
-	const s = monitor(stations, interval, 50, mock)
-	t.equal(mock.departures.callCount, 0)
+	const s = monitor(hafasMock, stations, interval, 50)
+	t.equal(hafasMock.departures.callCount, 0)
 	clock.tick(1)
-	t.equal(mock.departures.callCount, 1)
+	t.equal(hafasMock.departures.callCount, 1)
 	clock.tick(50)
-	t.equal(mock.departures.callCount, 2)
+	t.equal(hafasMock.departures.callCount, 2)
 
 	s.stop()
 	clock.restore()
@@ -76,14 +77,14 @@ test('starts querying in steps', (t) => {
 test('checks for every `interval` milliseconds', (t) => {
 	t.plan(3)
 	const clock = sinon.useFakeTimers()
-	const mock = mockedHafas()
+	const hafasMock = mockedHafas()
 
-	const s = monitor(stations, interval, 1, mock)
-	t.equal(mock.departures.callCount, 0)
+	const s = monitor(hafasMock, stations, interval, 1)
+	t.equal(hafasMock.departures.callCount, 0)
 	clock.tick(1)
-	t.equal(mock.departures.callCount, stations.length)
+	t.equal(hafasMock.departures.callCount, stations.length)
 	clock.tick(interval)
-	t.equal(mock.departures.callCount, 2 * stations.length)
+	t.equal(hafasMock.departures.callCount, 2 * stations.length)
 
 	s.stop()
 	clock.restore()
@@ -93,14 +94,14 @@ test('checks for every `interval` milliseconds', (t) => {
 
 test('runs a manual check', (t) => {
 	t.plan(2)
-	const mock = mockedHafas()
+	const hafasMock = mockedHafas()
 
-	const s = monitor(stations, interval, 10, mock)
-	const oldCount = mock.departures.callCount
+	const s = monitor(hafasMock, stations, interval, 10)
+	const oldCount = hafasMock.departures.callCount
 
 	s.manual('900000100003')
-	t.equal(mock.departures.callCount, oldCount + 1)
-	t.equal(mock.departures.getCall(oldCount).args[0], '900000100003')
+	t.equal(hafasMock.departures.callCount, oldCount + 1)
+	t.equal(hafasMock.departures.getCall(oldCount).args[0], '900000100003')
 
 	s.stop()
 })
@@ -110,15 +111,15 @@ test('runs a manual check', (t) => {
 test('clears all intervals on `stop()`', (t) => {
 	t.plan(1)
 	const clock = sinon.useFakeTimers()
-	const mock = mockedHafas()
+	const hafasMock = mockedHafas()
 
-	const s = monitor(stations, interval, 1, mock)
+	const s = monitor(hafasMock, stations, interval, 1)
 	clock.tick(1 + 5 * interval)
-	const count = mock.departures.callCount
+	const count = hafasMock.departures.callCount
 
 	s.stop()
 	clock.tick(5 * interval)
-	t.equal(mock.departures.callCount, count)
+	t.equal(hafasMock.departures.callCount, count)
 
 	clock.restore()
 })
@@ -127,7 +128,7 @@ test('clears all intervals on `stop()`', (t) => {
 
 test('emits `close` & `end` on `stop()`', (t) => {
 	t.plan(2)
-	const s = monitor(stations, interval)
+	const s = monitor(hafas, stations, interval)
 	const onClose = sinon.spy()
 	const onEnd = sinon.spy()
 	s.on('close', onClose)
@@ -142,7 +143,7 @@ test('emits `close` & `end` on `stop()`', (t) => {
 
 test('emits `end` on `stop()`', (t) => {
 	t.plan(1)
-	const s = monitor(stations, interval)
+	const s = monitor(hafas, stations, interval)
 	const spy = sinon.spy()
 	s.on('end', spy)
 
