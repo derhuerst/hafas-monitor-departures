@@ -11,7 +11,7 @@ const createMonitor = (hafas, stations, interval, step) => {
 		throw new Error('At least one station must be passed.')
 	}
 	interval = interval || 60 * 1000
-	step = step || Math.min(Math.floor(interval / stations.length), 100)
+	step = step || Math.floor(interval / stations.length)
 	const duration = Math.ceil(interval / 60 / 1000)
 
 	const avgDuration = createAvgWindow(5, 0)
