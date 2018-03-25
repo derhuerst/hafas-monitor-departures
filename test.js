@@ -1,4 +1,5 @@
 'use strict'
+const wtfnode = require('wtfnode')
 
 const test = require('tape')
 const hafas = require('vbb-hafas')
@@ -128,25 +129,18 @@ test('clears all intervals on `stop()`', (t) => {
 
 test('emits `close` & `end` on `stop()`', (t) => {
 	t.plan(2)
-	const s = createMonitor(hafas, stations, interval)
+	const s = createMonitor(hafas, stations, interval, 100)
+	s.on('data', () => {})
 	const onClose = sinon.spy()
 	const onEnd = sinon.spy()
 	s.on('close', onClose)
 	s.on('end', onEnd)
 
-	s.stop()
-	t.equal(onClose.callCount, 1)
-	t.equal(onEnd.callCount, 1)
-})
-
-
-
-test('emits `end` on `stop()`', (t) => {
-	t.plan(1)
-	const s = createMonitor(hafas, stations, interval)
-	const spy = sinon.spy()
-	s.on('end', spy)
-
-	s.stop()
-	t.equal(spy.callCount, 1)
+	setImmediate(() => {
+		s.stop()
+		setImmediate(() => {
+			t.equal(onClose.callCount, 1)
+			t.equal(onEnd.callCount, 1)
+		})
+	})
 })
