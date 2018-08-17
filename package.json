@@ -29,7 +29,7 @@
 		"sinon": "^6.0.0",
 		"tap-min": "^1.2.1",
 		"tape": "^4.6.3",
-		"vbb-hafas": "^4.1.1"
+		"vbb-hafas": "^5.0.0"
 	},
 	"peerDependencies": {
 		"hafas-client": "^2.0.0"
