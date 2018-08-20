@@ -1,11 +1,11 @@
 'use strict'
 
 const test = require('tape')
-const hafas = require('vbb-hafas')
+const createHafas = require('vbb-hafas')
 const sinon = require('sinon')
 const isStream = require('is-stream')
 
-const createMonitor = require('./index')
+const createMonitor = require('.')
 
 const stations = ['900000100003', '900000023201'] // alex & zoo
 const interval = 5 * 1000 // 5s
@@ -132,8 +132,11 @@ test('clears all intervals on `stop()`', (t) => {
 
 test('emits `close` & `end` on `stop()`', (t) => {
 	t.plan(2)
+
+	const hafas = createHafas('hafas-monitor-departures test')
 	const s = createMonitor(hafas, stations, interval, 100)
 	s.on('data', () => {})
+
 	const onClose = sinon.spy()
 	const onEnd = sinon.spy()
 	s.on('close', onClose)
