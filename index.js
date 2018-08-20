@@ -50,22 +50,22 @@ const createMonitor = (hafas, stations, interval, step) => {
 
 	const out = new Readable({
 		objectMode: true,
-		read: () => {}
+		read: () => {},
+		destroy: (err, cb) => {
+			if (!stopped) {
+				stopped = true
+				clearInterval(_interval)
+				_interval = null
+				out.emit('end')
+			}
+			cb(err)
+		}
 	})
 	out.manual = fetch
 
 	let stopped = false
 	let _interval = setInterval(fetchAll, interval)
 	setImmediate(fetchAll)
-	out.stop = () => {
-		if (!stopped) {
-			stopped = true
-			clearInterval(_interval)
-			_interval = null
-		}
-		out.emit('close')
-		out.push(null) // end
-	}
 
 	return out
 }
