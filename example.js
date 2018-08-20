@@ -15,5 +15,5 @@ const departures = monitor(hafas, stations, interval)
 .on('stats', console.error)
 
 setTimeout(() => {
-	departures.destroy() // stop querying
+	departures.stop() // stop querying
 }, interval * 30)
