@@ -44,6 +44,12 @@ setTimeout(() => {
 To manually issue a *single* departures check at a station, use `departures.manual(id)`. The result will be emitted in a data event like all others.
 
 
+## Related
+
+- [`hafas-record-delays`](https://npmjs.com/package/hafas-record-delays) – Record delays from [`hafas-monitor-departures`](https://github.com/derhuerst/hafas-monitor-departures) into a [LevelDB](http://leveldb.org).
+- [`record-vbb-delays`](https://npmjs.com/package/record-vbb-delays) – Record VBB departures from HAFAS.
+
+
 ## Contributing
 
 If you **have a question**, **found a bug** or want to **propose a feature**, have a look at [the issues page](https://github.com/derhuerst/hafas-monitor-departures/issues).
