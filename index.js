@@ -3,6 +3,8 @@
 const {Readable} = require('stream')
 const createAvgWindow = require('live-moving-average')
 
+const T_QUERY = Symbol('hafas-monitor-departures query time')
+
 const createMonitor = (hafas, stations, interval, step) => {
 	if (!hafas || 'function' !== typeof hafas.departures) {
 		throw new Error('Invalid HAFAS client passed.')
@@ -17,18 +19,22 @@ const createMonitor = (hafas, stations, interval, step) => {
 	const avgDuration = createAvgWindow(5, 0)
 	let reqs = 0, departures = 0
 	const fetch = (id) => {
-		const start = Date.now()
+		const t0 = Date.now()
 		reqs++
 
-		const when = new Date(start + 60 * 1000)
+		const when = new Date(t0 + 60 * 1000)
 		hafas.departures(id, {when, duration})
 		.then((deps) => {
 			if (stopped) return
 
-			avgDuration.push(Date.now() - start)
+			// collect metadata
+			avgDuration.push(Date.now() - t0)
 			departures += deps.length
 
-			for (let dep of deps) out.push(dep)
+			for (let dep of deps) {
+				Object.defineProperty(dep, T_QUERY, {value: t0})
+				out.push(dep)
+			}
 
 			// todo: debounce this
 			out.emit('stats', {
@@ -70,4 +76,5 @@ const createMonitor = (hafas, stations, interval, step) => {
 	return out
 }
 
+createMonitor.tQuery = T_QUERY
 module.exports = createMonitor
