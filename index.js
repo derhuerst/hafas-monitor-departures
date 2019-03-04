@@ -73,6 +73,7 @@ const createMonitor = (hafas, stations, interval, step) => {
 		out.push(null) // end
 	}
 
+	out.tQuery = T_QUERY
 	return out
 }
 

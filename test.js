@@ -60,15 +60,15 @@ test('returns a stream', (t) => {
 
 
 
-test.only('exposes query time', (t) => {
-	t.plan(1)
+test('exposes query time', (t) => {
+	t.plan(2)
 	const hafasMock = mockedHafas()
 	const clock = sinon.useFakeTimers()
 	const m = createMonitor(hafasMock, stations)
 
 	m.once('data', (dep) => {
-		const t0 = dep[createMonitor.tQuery]
-		t.equal(typeof t0, 'number')
+		t.equal(typeof dep[createMonitor.tQuery], 'number')
+		t.equal(typeof dep[m.tQuery], 'number')
 	})
 	clock.tick(30 * 1000)
 	clock.restore()

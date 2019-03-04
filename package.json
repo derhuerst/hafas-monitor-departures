@@ -1,7 +1,7 @@
 {
 	"name": "hafas-monitor-departures",
 	"description": "Pass in a HAFAS client, fetch all departures at any set of stations.",
-	"version": "2.1.0",
+	"version": "2.2.0",
 	"main": "index.js",
 	"files": [
 		"index.js"
