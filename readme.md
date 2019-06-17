@@ -2,6 +2,8 @@
 
 **Pass in a HAFAS client, fetch all departures at any set of stations.** (You may get blacklisted.)
 
+If you want to monitor trips/departures in an area, use [`hafas-monitor-trips`](https://github.com/derhuerst/hafas-monitor-trips). It polls HAFAS more efficiently.
+
 [![npm version](https://img.shields.io/npm/v/hafas-monitor-departures.svg)](https://www.npmjs.com/package/hafas-monitor-departures)
 [![build status](https://img.shields.io/travis/derhuerst/hafas-monitor-departures.svg)](https://travis-ci.org/derhuerst/hafas-monitor-departures)
 ![ISC-licensed](https://img.shields.io/github/license/derhuerst/hafas-monitor-departures.svg)
@@ -48,6 +50,8 @@ To manually issue a *single* departures check at a station, use `departures.manu
 
 - [`hafas-record-delays`](https://npmjs.com/package/hafas-record-delays) – Record delays from [`hafas-monitor-departures`](https://github.com/derhuerst/hafas-monitor-departures) into a [LevelDB](http://leveldb.org).
 - [`record-vbb-delays`](https://npmjs.com/package/record-vbb-delays) – Record VBB departures from HAFAS.
+- [`hafas-monitor-trips`](https://npmjs.com/package/hafas-monitor-trips) – Using a HAFAS endpoint, watch all trips in a bounding box.
+- [`hafas-monitor-trips-server`](https://npmjs.com/package/hafas-monitor-trips-server) – A server that manages [`hafas-monitor-trips`](https://github.com/derhuerst/hafas-monitor-trips) instances.
 
 
 ## Contributing
