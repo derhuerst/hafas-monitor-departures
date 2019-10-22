@@ -39,7 +39,7 @@ setTimeout(() => {
 }, interval * 3)
 ```
 
-`createMonitor` will call `hafas.departures()` and writes each of the returned departures into the stream. It expects `departures()` to be compatible with [the implementation from `hafas-client`](https://github.com/public-transport/hafas-client/blob/v2.5.0/docs/departures.md#departuresstation-opt).
+`hafas.departures()` must be compatible with [the implementation from `hafas-client`](https://github.com/public-transport/hafas-client/blob/4.6.0/docs/departures.md#departuresstation-opt).
 
 *Note:* A stream created by calling `createMonitor(…)` does not stop calling the API if you `unpipe` it. You need to manually call `departures.stop()`.
 
