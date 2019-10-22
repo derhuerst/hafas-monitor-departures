@@ -1,9 +1,19 @@
 'use strict'
 
-const {Readable} = require('stream')
 const createAvgWindow = require('live-moving-average')
+const {EventEmitter} = require('events')
+
+const WATCH_EVENTS = [
+	'departure',
+	// todo: stopover
+	'stats'
+]
 
 const T_QUERY = Symbol('hafas-monitor-departures query time')
+
+const defaults = {
+	interval: 6 * 1000
+}
 
 const createStationsMonitor = (hafas, stations, opt = {}) => {
 	if (!hafas || 'function' !== typeof hafas.departures) {
@@ -13,7 +23,7 @@ const createStationsMonitor = (hafas, stations, opt = {}) => {
 		throw new Error('At least one station must be passed.')
 	}
 
-	const interval = opt.interval || 60 * 1000
+	const {interval, departuresOpt} = {...defaults, ...opt}
 	const step = opt.step || Math.floor(interval / stations.length)
 	const duration = opt.duration || Math.ceil(interval / 60 / 1000)
 
@@ -26,7 +36,7 @@ const createStationsMonitor = (hafas, stations, opt = {}) => {
 		const when = new Date(t0 + 60 * 1000)
 		hafas.departures(id, {when, duration})
 		.then((deps) => {
-			if (stopped) return
+			if (!running) return
 
 			// collect metadata
 			avgDuration.push(Date.now() - t0)
@@ -34,7 +44,7 @@ const createStationsMonitor = (hafas, stations, opt = {}) => {
 
 			for (let dep of deps) {
 				Object.defineProperty(dep, T_QUERY, {value: t0})
-				out.push(dep)
+				out.emit('departure', dep)
 			}
 
 			// todo: debounce this
@@ -48,31 +58,35 @@ const createStationsMonitor = (hafas, stations, opt = {}) => {
 	const fetchAll = () => {
 		let i = 1
 		const interval = setInterval(() => {
-			if (stopped || i >= stations.length) return clearInterval(interval)
+			if (!running || i >= stations.length) {
+				clearInterval(interval)
+				return;
+			}
 			fetch(stations[i])
 			i++
 		}, step)
 		fetch(stations[0])
 	}
 
-	const out = new Readable({
-		objectMode: true,
-		read: () => {}
-	})
+	const out = new EventEmitter()
 	out.manual = fetch
 
-	let stopped = false
-	let _interval = setInterval(fetchAll, interval)
-	setImmediate(fetchAll)
-	out.stop = () => {
-		if (!stopped) {
-			stopped = true
-			clearInterval(_interval)
-			_interval = null
-		}
-		out.emit('close')
-		out.push(null) // end
-	}
+	let listeners = 0, running = false, timer = null
+	out.on('newListener', (eventName) => {
+		if (!WATCH_EVENTS.includes(eventName) || listeners > 0) return;
+
+		timer = setInterval(fetchAll, interval)
+		setImmediate(fetchAll)
+		running = true
+		listeners++
+	})
+	out.on('removeListener', (eventName) => {
+		if (!WATCH_EVENTS.includes(eventName) || listeners < 1) return;
+
+		clearInterval(timer)
+		running = false
+		listeners--
+	})
 
 	out.tQuery = T_QUERY
 	return out

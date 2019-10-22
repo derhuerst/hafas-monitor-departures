@@ -3,7 +3,6 @@
 const test = require('tape')
 const createHafas = require('vbb-hafas')
 const sinon = require('sinon')
-const isStream = require('is-stream')
 
 const createMonitor = require('.')
 
@@ -42,31 +41,13 @@ const mockedHafas = () => ({
 
 
 
-test('returns a stream', (t) => {
-	t.plan(2)
-	const hafasMock = mockedHafas()
-	const clock = sinon.useFakeTimers()
-	const s1 = createMonitor(hafasMock, stations, interval)
-	const s2 = createMonitor(hafasMock, stations)
-
-	t.ok(isStream(s1))
-	t.ok(isStream(s2))
-
-	s1.stop()
-	s2.stop()
-	clock.tick(30 * 1000)
-	clock.restore()
-})
-
-
-
 test('exposes query time', (t) => {
 	t.plan(2)
 	const hafasMock = mockedHafas()
 	const clock = sinon.useFakeTimers()
 	const m = createMonitor(hafasMock, stations)
 
-	m.once('data', (dep) => {
+	m.once('departure', (dep) => {
 		t.equal(typeof dep[createMonitor.tQuery], 'number')
 		t.equal(typeof dep[m.tQuery], 'number')
 	})
@@ -81,14 +62,14 @@ test('starts querying in steps', (t) => {
 	const clock = sinon.useFakeTimers()
 	const hafasMock = mockedHafas()
 
-	const s = createMonitor(hafasMock, stations, interval, 50)
+	const s = createMonitor(hafasMock, stations, {interval, step: 50})
+	s.once('departure', () => {})
 	t.equal(hafasMock.departures.callCount, 0)
 	clock.tick(1)
 	t.equal(hafasMock.departures.callCount, 1)
 	clock.tick(50)
 	t.equal(hafasMock.departures.callCount, 2)
 
-	s.stop()
 	clock.restore()
 })
 
@@ -98,15 +79,17 @@ test('checks for every `interval` milliseconds', (t) => {
 	t.plan(3)
 	const clock = sinon.useFakeTimers()
 	const hafasMock = mockedHafas()
+	const onDep = () => {}
 
-	const s = createMonitor(hafasMock, stations, interval, 1)
+	const s = createMonitor(hafasMock, stations, {interval, step: 1})
+	s.on('departure', onDep)
 	t.equal(hafasMock.departures.callCount, 0)
 	clock.tick(1)
 	t.equal(hafasMock.departures.callCount, stations.length)
 	clock.tick(interval)
 	t.equal(hafasMock.departures.callCount, 2 * stations.length)
 
-	s.stop()
+	s.removeListener('departure', onDep)
 	clock.restore()
 })
 
@@ -116,14 +99,12 @@ test('runs a manual check', (t) => {
 	t.plan(2)
 	const hafasMock = mockedHafas()
 
-	const s = createMonitor(hafasMock, stations, interval, 10)
+	const s = createMonitor(hafasMock, stations, {interval, step: 10})
 	const oldCount = hafasMock.departures.callCount
 
 	s.manual('900000100003')
-	t.equal(hafasMock.departures.callCount, oldCount + 1)
-	t.equal(hafasMock.departures.getCall(oldCount).args[0], '900000100003')
-
-	s.stop()
+	t.equal(hafasMock.departures.callCount, 1)
+	t.equal(hafasMock.departures.getCall(0).args[0], '900000100003')
 })
 
 
@@ -132,37 +113,16 @@ test('clears all intervals on `stop()`', (t) => {
 	t.plan(1)
 	const clock = sinon.useFakeTimers()
 	const hafasMock = mockedHafas()
+	const onDep = () => {}
 
-	const s = createMonitor(hafasMock, stations, interval, 1)
+	const s = createMonitor(hafasMock, stations, {interval, step: 1})
+	s.on('departure', onDep)
 	clock.tick(1 + 5 * interval)
 	const count = hafasMock.departures.callCount
 
-	s.stop()
+	s.removeListener('departure', onDep)
 	clock.tick(5 * interval)
 	t.equal(hafasMock.departures.callCount, count)
 
 	clock.restore()
-})
-
-
-
-test('emits `close` & `end` on `stop()`', (t) => {
-	t.plan(2)
-
-	const hafas = createHafas('hafas-monitor-departures test')
-	const s = createMonitor(hafas, stations, interval, 100)
-	s.on('data', () => {})
-
-	const onClose = sinon.spy()
-	const onEnd = sinon.spy()
-	s.on('close', onClose)
-	s.on('end', onEnd)
-
-	setImmediate(() => {
-		s.stop()
-		setImmediate(() => {
-			t.equal(onClose.callCount, 1)
-			t.equal(onEnd.callCount, 1)
-		})
-	})
 })

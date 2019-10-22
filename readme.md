@@ -31,20 +31,20 @@ const interval = 2 * 60 * 1000 // every two minutes
 const duration = 10 // each time, fetch departures for the next 10 min
 
 const hafas = createHafas('my-awesome-program')
-const departures = createMonitor(hafas, stations, {interval, duration})
-.on('error', console.error)
-.on('data', console.log)
+const monitor = createMonitor(hafas, stations, {interval, duration})
+monitor.on('error', console.error)
+monitor.on('departure', console.log)
 
 setTimeout(() => {
-	departures.stop() // stop querying
+	monitor.removeListener('departure', console.log)
 }, interval * 3)
 ```
 
 `hafas.departures()` must be compatible with [the implementation from `hafas-client`](https://github.com/public-transport/hafas-client/blob/4.6.0/docs/departures.md#departuresstation-opt).
 
-*Note:* A stream created by calling `createMonitor(…)` does not stop calling the API if you `unpipe` it. You need to manually call `departures.stop()`.
+Once you listen to any of the `departure` or `stats` events, it will automatically start to watch, and stop once you stop listening.
 
-To manually issue a *single* departures check at a station, use `departures.manual(id)`. The result will be emitted in a data event like all others.
+To manually issue a *single* departures check at a station, use `monitor.manual(id)`. The result will be emitted in a data event like all others.
 
 
 ## API
