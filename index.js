@@ -5,16 +5,17 @@ const createAvgWindow = require('live-moving-average')
 
 const T_QUERY = Symbol('hafas-monitor-departures query time')
 
-const createMonitor = (hafas, stations, interval, step) => {
+const createStationsMonitor = (hafas, stations, opt = {}) => {
 	if (!hafas || 'function' !== typeof hafas.departures) {
 		throw new Error('Invalid HAFAS client passed.')
 	}
 	if (!stations || stations.length === 0) {
 		throw new Error('At least one station must be passed.')
 	}
-	interval = interval || 60 * 1000
-	step = step || Math.floor(interval / stations.length)
-	const duration = Math.ceil(interval / 60 / 1000)
+
+	const interval = opt.interval || 60 * 1000
+	const step = opt.step || Math.floor(interval / stations.length)
+	const duration = opt.duration || Math.ceil(interval / 60 / 1000)
 
 	const avgDuration = createAvgWindow(5, 0)
 	let reqs = 0, departures = 0
@@ -77,5 +78,5 @@ const createMonitor = (hafas, stations, interval, step) => {
 	return out
 }
 
-createMonitor.tQuery = T_QUERY
-module.exports = createMonitor
+createStationsMonitor.tQuery = T_QUERY
+module.exports = createStationsMonitor

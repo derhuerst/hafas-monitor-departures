@@ -28,9 +28,10 @@ const createHafas = require('vbb-hafas')
 
 const stations = ['900000100003'] // array of station ids
 const interval = 2 * 60 * 1000 // every two minutes
+const duration = 10 // each time, fetch departures for the next 10 min
 
 const hafas = createHafas('my-awesome-program')
-const departures = createMonitor(hafas, stations, interval)
+const departures = createMonitor(hafas, stations, {interval, duration})
 .on('error', console.error)
 .on('data', console.log)
 
@@ -44,6 +45,23 @@ setTimeout(() => {
 *Note:* A stream created by calling `createMonitor(…)` does not stop calling the API if you `unpipe` it. You need to manually call `departures.stop()`.
 
 To manually issue a *single* departures check at a station, use `departures.manual(id)`. The result will be emitted in a data event like all others.
+
+
+## API
+
+```js
+createMonitor(hafasClient, listOfStations, opt = {})
+```
+
+`opt` overrides the following default values:
+
+```js
+{
+	interval: interval || 60 * 1000,
+	step: step || Math.floor(interval / stations.length),
+	duration: duration || Math.ceil(interval / 60 / 1000)
+}
+```
 
 
 ## Related
