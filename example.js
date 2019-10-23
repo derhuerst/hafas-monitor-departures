@@ -12,6 +12,7 @@ const hafas = createHafas('hafas-monitor-departures example')
 const departures = monitor(hafas, stations, interval)
 .on('error', console.error)
 .on('departure', console.log)
+// .on('stopover', console.log)
 .on('stats', console.error)
 
 setTimeout(() => {

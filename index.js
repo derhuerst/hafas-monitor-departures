@@ -5,7 +5,7 @@ const {EventEmitter} = require('events')
 
 const WATCH_EVENTS = [
 	'departure',
-	// todo: stopover
+	'stopover',
 	'stats'
 ]
 
@@ -34,7 +34,9 @@ const createStationsMonitor = (hafas, stations, opt = {}) => {
 		reqs++
 
 		const when = new Date(t0 + 60 * 1000)
-		hafas.departures(id, {when, duration})
+		hafas.departures(id, {
+			when, duration, stopovers: fetchStopovers
+		})
 		.then((deps) => {
 			if (!running) return
 
@@ -45,6 +47,11 @@ const createStationsMonitor = (hafas, stations, opt = {}) => {
 			for (let dep of deps) {
 				Object.defineProperty(dep, T_QUERY, {value: t0})
 				out.emit('departure', dep)
+				if (Array.isArray(dep.nextStopovers)) {
+					for (const st of dep.nextStopovers) {
+						out.emit('stopover', st)
+					}
+				}
 			}
 
 			// todo: debounce this
@@ -72,6 +79,7 @@ const createStationsMonitor = (hafas, stations, opt = {}) => {
 	out.manual = fetch
 
 	let listeners = 0, running = false, timer = null
+	let fetchStopovers = false
 	out.on('newListener', (eventName) => {
 		if (!WATCH_EVENTS.includes(eventName) || listeners > 0) return;
 
@@ -79,6 +87,8 @@ const createStationsMonitor = (hafas, stations, opt = {}) => {
 		setImmediate(fetchAll)
 		running = true
 		listeners++
+
+		if (eventName === 'stopover') fetchStopovers = true
 	})
 	out.on('removeListener', (eventName) => {
 		if (!WATCH_EVENTS.includes(eventName) || listeners < 1) return;
@@ -86,6 +96,8 @@ const createStationsMonitor = (hafas, stations, opt = {}) => {
 		clearInterval(timer)
 		running = false
 		listeners--
+
+		fetchStopovers = out.listenerCount('stopover') <= 1
 	})
 
 	out.tQuery = T_QUERY
