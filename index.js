@@ -2,6 +2,7 @@
 
 const createAvgWindow = require('live-moving-average')
 const {EventEmitter} = require('events')
+const debug = require('debug')('hafas-monitor-departures')
 
 const WATCH_EVENTS = [
 	'departure',
@@ -12,7 +13,8 @@ const WATCH_EVENTS = [
 const T_QUERY = Symbol('hafas-monitor-departures query time')
 
 const defaults = {
-	interval: 6 * 1000
+	interval: 6 * 1000,
+	departuresOpt: {}
 }
 
 const createStationsMonitor = (hafas, stations, opt = {}) => {
@@ -35,6 +37,7 @@ const createStationsMonitor = (hafas, stations, opt = {}) => {
 
 		const when = new Date(t0 + 60 * 1000)
 		hafas.departures(id, {
+			...departuresOpt,
 			when, duration, stopovers: fetchStopovers
 		})
 		.then((deps) => {
@@ -82,6 +85,7 @@ const createStationsMonitor = (hafas, stations, opt = {}) => {
 	let fetchStopovers = false
 	out.on('newListener', (eventName) => {
 		if (!WATCH_EVENTS.includes(eventName) || listeners > 0) return;
+		debug('starting monitor')
 
 		timer = setInterval(fetchAll, interval)
 		setImmediate(fetchAll)
@@ -92,6 +96,7 @@ const createStationsMonitor = (hafas, stations, opt = {}) => {
 	})
 	out.on('removeListener', (eventName) => {
 		if (!WATCH_EVENTS.includes(eventName) || listeners < 1) return;
+		debug('stopping monitor')
 
 		clearInterval(timer)
 		running = false
