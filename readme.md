@@ -70,6 +70,7 @@ createMonitor(hafasClient, listOfStations, opt = {})
 - [`record-vbb-delays`](https://npmjs.com/package/record-vbb-delays) – Record VBB departures from HAFAS.
 - [`hafas-monitor-trips`](https://npmjs.com/package/hafas-monitor-trips) – Using a HAFAS endpoint, watch all trips in a bounding box.
 - [`hafas-monitor-trips-server`](https://npmjs.com/package/hafas-monitor-trips-server) – A server that manages [`hafas-monitor-trips`](https://github.com/derhuerst/hafas-monitor-trips) instances.
+- [`hafas-client`](https://github.com/public-transport/hafas-client) – JavaScript client for HAFAS public transport APIs.
 
 
 ## Contributing
