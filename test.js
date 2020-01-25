@@ -12,8 +12,10 @@ const interval = 5 * 1000 // 5s
 
 
 const mockedDeparture = (id, opt) => () => ({
-	station: {id},
+	tripId: Math.round(Math.random() * 30000),
+	stop: {type: 'stop', id},
 	when: new Date(opt.when + 5 * 1000).toISOString(),
+	plannedWhen: new Date(opt.when + 7 * 1000).toISOString(),
 	delay: 2,
 	direction: 'foo',
 	line: {
@@ -22,8 +24,7 @@ const mockedDeparture = (id, opt) => () => ({
 		name: '123 Line',
 		public: true,
 		mode: 'train'
-	},
-	trip: Math.round(Math.random() * 30000)
+	}
 })
 
 const mockedDepartures = (id, opt) =>

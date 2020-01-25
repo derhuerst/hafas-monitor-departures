@@ -19,20 +19,20 @@
 	"repository": "derhuerst/hafas-monitor-departures",
 	"license": "ISC",
 	"engines": {
-		"node": ">=8.3.0"
+		"node": ">=10"
 	},
 	"dependencies": {
 		"debug": "^4.1.1",
 		"live-moving-average": "^0.1.0"
 	},
 	"devDependencies": {
-		"sinon": "^7.2.3",
+		"sinon": "^8.1.1",
 		"tap-min": "^2.0.0",
 		"tape": "^4.6.3",
-		"vbb-hafas": "^6.1.0"
+		"vbb-hafas": "^7.0.1"
 	},
 	"peerDependencies": {
-		"hafas-client": "^4.0.0"
+		"hafas-client": "^4 || ^5"
 	},
 	"scripts": {
 		"test": "node test.js | tap-min",

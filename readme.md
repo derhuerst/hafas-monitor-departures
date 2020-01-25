@@ -40,7 +40,7 @@ setTimeout(() => {
 }, interval * 3)
 ```
 
-`hafas.departures()` must be compatible with [the implementation from `hafas-client`](https://github.com/public-transport/hafas-client/blob/4.6.0/docs/departures.md#departuresstation-opt).
+`hafas.departures()` must be compatible with the implementation [of `hafas-client@5`](https://github.com/public-transport/hafas-client/blob/5/docs/departures.md#departuresstation-opt) (or [of `hafas-client@^4`](https://github.com/public-transport/hafas-client/blob/4/docs/departures.md#departuresstation-opt)).
 
 Once you listen to any of the `departure` or `stats` events, it will automatically start to watch, and stop once you stop listening.
 
